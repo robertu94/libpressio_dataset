@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/libpressio_datasetTargets.cmake")
+
+find_package(LibPressio REQUIRED)
+find_package(std_compat REQUIRED)
+
+check_required_components(libpressio_dataset)
