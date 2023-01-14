@@ -39,4 +39,9 @@ endfunction()
 
 add_gtest(test_libpressio_dataset.cc)
 
+#this test just tests if everything compiles and links
+enable_language(C)
+add_executable(test_libpressio_dataset_c_compiles test_libpressio_dataset.c)
+target_link_libraries(test_libpressio_dataset_c_compiles libpressio_dataset)
+
 # vim: ft=cmake :

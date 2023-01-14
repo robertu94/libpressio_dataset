@@ -1,6 +1,6 @@
 ## template for a CMake C++ Library
 cmake_minimum_required(VERSION 3.14)
-project(libpressio_dataset VERSION "0.0.1" LANGUAGES CXX)
+project(libpressio_dataset VERSION "0.0.2" LANGUAGES CXX)
 
 #correct was to set a default build type
 # https://blog.kitware.com/cmake-and-the-default-build-type/
@@ -61,11 +61,16 @@ add_library(libpressio_dataset
   ./src/plugins/dataset_loader/folder_loader.cc
   ./src/plugins/dataset_loader/block_sampler.cc
   ./src/plugins/dataset_loader/cache_loader.cc
+  ./src/plugins/dataset_loader/random_sampler.cc
   ./include/libpressio_dataset.h
   ./include/libpressio_dataset_ext/loader.h
   )
 target_compile_features(libpressio_dataset PUBLIC cxx_std_17)
 target_link_libraries(libpressio_dataset PUBLIC LibPressio::libpressio)
+target_include_directories(libpressio_dataset
+    PRIVATE
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src> 
+    )
 target_include_directories(libpressio_dataset 
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> 
@@ -84,6 +89,21 @@ if(LIBPRESSIO_DATASET_WERROR)
     )
 endif()
 
+
+option(LIBPRESSIO_DATASET_HAS_HDF5 ON)
+if(LIBPRESSIO_DATASET_HAS_HDF5)
+    enable_language(C)
+    find_package(HDF5 REQUIRED COMPONENTS C)
+    target_sources(libpressio_dataset PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/plugins/dataset_loader/hdf5_loader.cc)
+    target_link_libraries(libpressio_dataset PRIVATE ${HDF5_C_LIBRARIES})
+    target_include_directories(libpressio_dataset PRIVATE ${HDF5_C_INCLUDE_DIRS})
+    target_compile_definitions(libpressio_dataset PRIVATE ${HDF5_C_DEFINITIONS})
+    if(${HDF5_IS_PARALLEL})
+      find_package(MPI REQUIRED)
+      target_link_libraries(libpressio_dataset PRIVATE MPI::MPI_CXX)
+    endif()
+endif()
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/src/libpressio_dataset_version.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/include/libpressio_dataset_version.h
@@ -94,28 +114,28 @@ configure_file(
   @ONLY
   )
 
-export(TARGETS libpressio_dataset NAMESPACE libpressio_dataset:: FILE libpressio_dataset.cmake)
-install(TARGETS libpressio_dataset EXPORT libpressio_datasetTargets
+export(TARGETS libpressio_dataset NAMESPACE LibPressioDataset:: FILE libpressio_dataset.cmake)
+install(TARGETS libpressio_dataset EXPORT LibPressioDatasetTargets
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   )
 include(CMakePackageConfigHelpers)
-configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/libpressio_datasetConfig.cmake.in
-  "${CMAKE_CURRENT_BINARY_DIR}/libpressio_datasetConfig.cmake"
-  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libpressio_dataset
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/LibPressioDatasetConfig.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/LibPressioDatasetConfig.cmake"
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LibPressioDataset
 )
 write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/libpressio_datasetConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/LibPressioDatasetConfigVersion.cmake"
   VERSION "${PROJECT_VERSION}"
   COMPATIBILITY AnyNewerVersion
 )
 install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/libpressio_datasetConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/libpressio_datasetConfigVersion.cmake"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libpressio_dataset
+    "${CMAKE_CURRENT_BINARY_DIR}/LibPressioDatasetConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/LibPressioDatasetConfigVersion.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LibPressioDataset
 )
-install(EXPORT libpressio_datasetTargets NAMESPACE libpressio_dataset:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libpressio_dataset)
+install(EXPORT LibPressioDatasetTargets NAMESPACE LibPressioDataset:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LibPressioDataset)
 install(DIRECTORY include/ DESTINATION
   ${CMAKE_INSTALL_INCLUDEDIR}/libpressio_dataset)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/libpressio_dataset_version.h

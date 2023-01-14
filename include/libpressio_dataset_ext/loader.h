@@ -31,6 +31,8 @@ class dataset_loader: public pressio_configurable, public pressio_errorable, pub
   }
 
   virtual std::unique_ptr<dataset_loader> clone() = 0;
+
+  using pressio_errorable::set_error;
   private:
 };
 
@@ -80,7 +82,6 @@ class dataset_loader_base: public dataset_loader {
     virtual pressio_data load_data_impl(size_t n) =0;
 
     virtual pressio_options load_metadata_impl(size_t n) =0;
-
 };
 
 
