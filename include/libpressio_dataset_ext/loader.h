@@ -6,7 +6,7 @@
 #include <libpressio_ext/cpp/pressio.h>
 
 namespace libpressio_dataset {
-class dataset_loader: public pressio_configurable, public pressio_errorable, public pressio_versionable {
+class dataset_loader: public pressio_configurable, public pressio_versionable {
   public:
   virtual size_t num_datasets()=0;
   virtual pressio_data load_data(size_t)=0;
