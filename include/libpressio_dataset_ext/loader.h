@@ -8,6 +8,9 @@
 namespace libpressio_dataset {
 class dataset_loader: public pressio_configurable, public pressio_versionable {
   public:
+  std::string type() const final {
+      return "dataset";
+  }
   virtual size_t num_datasets()=0;
   virtual pressio_data load_data(size_t)=0;
   virtual pressio_options load_metadata(size_t)=0;
@@ -52,6 +55,19 @@ class dataset_loader_base: public dataset_loader {
     pressio_options get_documentation() const final {
       return get_documentation_impl();
     }
+
+    pressio_options get_configuration() const final {
+      auto ret = get_configuration_impl();
+      set(ret, "pressio:version_epoch", epoch_version());
+      set(ret, "pressio:version_major", major_version());
+      set(ret, "pressio:version_minor", minor_version());
+      set(ret, "pressio:version_patch", patch_version());
+      set(ret, "pressio:children", children());
+      set(ret, "pressio:prefix", prefix());
+      set(ret, "pressio:version", version());
+      set(ret, "pressio:type", type());
+      return ret;
+    }
     
     pressio_data load_data(size_t n) final {
       return load_data_impl(n);
@@ -68,6 +84,10 @@ class dataset_loader_base: public dataset_loader {
     }
 
     virtual pressio_options get_options_impl() const {
+      return {};
+    }
+
+    virtual pressio_options get_configuration_impl() const {
       return {};
     }
 
