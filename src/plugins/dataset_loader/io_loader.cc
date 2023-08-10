@@ -7,7 +7,16 @@ namespace libpressio_dataset { namespace io_loader {
   struct io_loader: public dataset_loader_base {
 
     size_t num_datasets_impl() override {
-      return 1;
+
+        std::unique_ptr<pressio_data, void(*)(pressio_data*)> ptr(nullptr, pressio_data_free);
+        if(use_template) {
+            ptr.reset((io_plugin->read(nullptr)));
+        } else {
+            pressio_data template_data(pressio_data::owning(dtype, dims));
+            ptr.reset((io_plugin->read(&template_data)));
+        }
+        if(ptr) return 1;
+        else return 0;
     }
 
     int set_options_impl(pressio_options const& options) override {
@@ -63,11 +72,12 @@ namespace libpressio_dataset { namespace io_loader {
         set(metadata, "loader:dims", pressio_data(dims.begin(), dims.end()));
         set(metadata, "loader:dtype", dtype);
       } else {
-        pressio_data data = std::move(*io_plugin->read(nullptr));
-        auto const& ddims = data.dimensions();
-        set(metadata, "loader:dims", pressio_data(ddims.begin(), ddims.end()));
-        set(metadata, "loader:dtype", data.dtype());
-
+        std::unique_ptr<pressio_data, void(*)(pressio_data*)> ptr(io_plugin->read(nullptr), pressio_data_free);
+        if(ptr) {
+            auto const& ddims = ptr->dimensions();
+            set(metadata, "loader:dims", pressio_data(ddims.begin(), ddims.end()));
+            set(metadata, "loader:dtype", ptr->dtype());
+        }
       }
       return metadata;
     }

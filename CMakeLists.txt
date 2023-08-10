@@ -1,6 +1,6 @@
 ## template for a CMake C++ Library
 cmake_minimum_required(VERSION 3.14)
-project(libpressio_dataset VERSION "0.0.4" LANGUAGES CXX)
+project(libpressio_dataset VERSION "0.0.5" LANGUAGES CXX)
 
 #correct was to set a default build type
 # https://blog.kitware.com/cmake-and-the-default-build-type/
@@ -60,8 +60,10 @@ add_library(libpressio_dataset
   ./src/plugins/dataset_loader/io_loader.cc
   ./src/plugins/dataset_loader/folder_loader.cc
   ./src/plugins/dataset_loader/block_sampler.cc
+  ./src/plugins/dataset_loader/block_slicer.cc
   ./src/plugins/dataset_loader/cache_loader.cc
   ./src/plugins/dataset_loader/random_sampler.cc
+  ./src/plugins/dataset_loader/pressio.cc
   ./include/libpressio_dataset.h
   ./include/libpressio_dataset_ext/loader.h
   )
