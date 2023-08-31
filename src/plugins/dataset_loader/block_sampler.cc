@@ -120,8 +120,8 @@ namespace libpressio_dataset { namespace block_sampler_loader_ns {
               throw std::runtime_error("block_size must be smaller than data size");
             }
             size_t upper_bound = 
-              (dat_dims[i]%block_size[i] == 0) ? ((dat_dims[i]/block_size[i])-1):
-                dat_dims[i]/block_size[i];
+              (dat_dims[i]%block_size[i] == 0) ? ((dat_dims[i]/block_size[i])-2):
+                (dat_dims[i]/block_size[i] - 1);
             std::uniform_int_distribution<size_t> dist(0, upper_bound);
             sampled_block[i] = dist(gen);
           }
