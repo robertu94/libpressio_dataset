@@ -159,6 +159,19 @@ int pressio_dataset_loader_load_metadata(struct pressio_dataset_loader* dataset_
 
 int pressio_dataset_loader_load_data(struct pressio_dataset_loader* dataset_loader, size_t n, struct pressio_data**);
 
+/*!
+ * \returns the major version number of the library
+ */
+int pressio_dataset_major_version();
+/*!
+ * \returns the major version number of the library
+ */
+int pressio_dataset_minor_version();
+/*!
+ * \returns the major version number of the library
+ */
+int pressio_dataset_patch_version();
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,4 +1,5 @@
 #include "libpressio_dataset_ext/loader.h"
+#include "libpressio_dataset_version.h"
 #include <cassert>
 #include <cstring>
 
@@ -165,5 +166,24 @@ int pressio_dataset_loader_load_data(struct pressio_dataset_loader* dataset_load
         } catch(std::exception const& ex) {
             return (*dataset_loader)->set_error(1,ex.what());
         }
+}
+
+/*!
+ * \returns the major version number of the library
+ */
+int pressio_dataset_major_version() {
+    return LIBPRESSIO_DATASET_MAJOR_VERSION;
+}
+/*!
+ * \returns the major version number of the library
+ */
+int pressio_dataset_minor_version() {
+    return LIBPRESSIO_DATASET_MINOR_VERSION;
+}
+/*!
+ * \returns the major version number of the library
+ */
+int pressio_dataset_patch_version() {
+    return LIBPRESSIO_DATASET_PATCH_VERSION;
 }
 }
