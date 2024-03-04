@@ -1,4 +1,5 @@
 #include <libpressio_dataset_ext/loader.h>
+#include <libpressio_ext/cpp/io.h>
 #include <std_compat/memory.h>
 #include <sstream>
 
